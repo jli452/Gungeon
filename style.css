@@ -1,0 +1,6 @@
+* {
+  cursor: url(images/crosshair.png), auto;
+}
+canvas {
+  background-color: yellow;
+}
