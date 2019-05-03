@@ -47,12 +47,22 @@ function drawBall() {
   ctx.closePath();
 }
 
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawBall();
+function playerMovement() {
   if (rightPressed && upPressed) {
     charPosX += 3;
-    charPosY +-3;
+    charPosY -=3;
+  }
+  else if(leftPressed && upPressed) {
+    charPosX -= 3;
+    charPosY -=3;
+  }
+  else if(rightPressed && downPressed) {
+    charPosX += 3;
+    charPosY +=3;
+  }
+  else if(leftPressed && downPressed) {
+    charPosX -= 3;
+    charPosY +=3;
   }
   else if (rightPressed && charPosX < canvas.width) {
     charPosX += 3;
@@ -63,6 +73,11 @@ function draw() {
   } else if (downPressed && charPosY < canvas.height) {
     charPosY += 3;
   }
+}
 
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawBall();
+  playerMovement();
 }
 var interval = setInterval(draw, 10);
