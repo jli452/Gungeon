@@ -15,26 +15,32 @@ var charPosY = (canvas.height - charRadius);
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
+// Keycodes for WASD
+// W: 87
+// A: 65
+// S: 83
+// D: 68
+
 function keyUpHandler(event) {
-  if (event.key == "Right" || event.key == "ArrowRight") {
+  if (event.keyCode === 68) {
     rightPressed = false;
-  } else if (event.key == "Left" || event.key == "ArrowLeft") {
+  } else if (event.keyCode === 65) {
     leftPressed = false;
-  } else if (event.key == "Up" || event.key == "ArrowUp") {
+  } else if (event.keyCode === 87) {
     upPressed = false;
-  } else if (event.key == "Down" || event.key == "ArrowDown") {
+  } else if (event.keyCode === 83) {
     downPressed = false;
   }
 }
 
 function keyDownHandler(event) {
-  if (event.key == "Right" || event.key == "ArrowRight") {
+  if (event.keyCode === 68) {
     rightPressed = true;
-  } else if (event.key == "Left" || event.key == "ArrowLeft") {
+  } else if (event.keyCode === 65) {
     leftPressed = true;
-  } else if (event.key == "Up" || event.key == "ArrowUp") {
+  } else if (event.keyCode === 87) {
     upPressed = true;
-  } else if (event.key == "Down" || event.key == "ArrowDown") {
+  } else if (event.keyCode === 83) {
     downPressed = true;
   }
 }
