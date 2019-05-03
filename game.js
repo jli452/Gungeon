@@ -1,6 +1,7 @@
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
+var startGame = false;
 
 var charRadius = 20;
 
@@ -9,8 +10,8 @@ var leftPressed = false;
 var upPressed = false;
 var downPressed = false;
 
-var charPosX = (canvas.width - charRadius);
-var charPosY = (canvas.height - charRadius);
+var charPosX = (canvas.width/2 - charRadius);
+var charPosY = (canvas.height/2 - charRadius);
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
@@ -45,7 +46,7 @@ function keyDownHandler(event) {
   }
 }
 
-function drawBall() {
+function drawChar() {
   ctx.beginPath();
   ctx.arc(charPosX, charPosY, charRadius, 0, Math.PI * 2, false);
   ctx.fillStyle = "#0095DD";
@@ -54,19 +55,19 @@ function drawBall() {
 }
 
 function playerMovement() {
-  if (rightPressed && upPressed) {
+  if (rightPressed && upPressed && charPosX < canvas.width && charPosY > 0) {
     charPosX += 3;
     charPosY -=3;
   }
-  else if(leftPressed && upPressed) {
+  else if(leftPressed && upPressed && charPosX > 0 && charPosY > 0) {
     charPosX -= 3;
     charPosY -=3;
   }
-  else if(rightPressed && downPressed) {
+  else if(rightPressed && downPressed && charPosX < canvas.width && charPosY < canvas.height) {
     charPosX += 3;
     charPosY +=3;
   }
-  else if(leftPressed && downPressed) {
+  else if(leftPressed && downPressed && charPosY < canvas.height && charPosX > 0) {
     charPosX -= 3;
     charPosY +=3;
   }
@@ -81,9 +82,9 @@ function playerMovement() {
   }
 }
 
-function draw() {
+function playGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawBall();
+  drawChar();
   playerMovement();
 }
-var interval = setInterval(draw, 10);
+var interval = setInterval(playGame, 10);
