@@ -12,13 +12,14 @@ var downPressed = false;
 var escPressed = false;
 var escCounter = 0;
 
-var charPosX = (canvas.width/2 - charRadius);
-var charPosY = (canvas.height/2 - charRadius);
+
+var charPosX = (canvas.width / 2 - charRadius);
+var charPosY = (canvas.height / 2 - charRadius);
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
-
+// Checking which keys are not being pressed
 function keyUpHandler(event) {
   if (event.key === "d") {
     rightPressed = false;
@@ -33,6 +34,7 @@ function keyUpHandler(event) {
   }
 }
 
+// Cheecking which keys are being pressed
 function keyDownHandler(event) {
   if (event.key === "d") {
     rightPressed = true;
@@ -44,7 +46,7 @@ function keyDownHandler(event) {
     downPressed = true;
   } else if (event.key === "Escape") {
     escPressed = true;
-    escCounter ++;
+    escCounter++;
   }
 }
 
@@ -60,20 +62,16 @@ function playerMovement() {
   if (rightPressed && upPressed && charPosX < canvas.width && charPosY > 0) {
     charPosX += 2;
     charPosY -= 2;
-  }
-  else if(leftPressed && upPressed && charPosX > 0 && charPosY > 0) {
+  } else if (leftPressed && upPressed && charPosX > 0 && charPosY > 0) {
     charPosX -= 2;
     charPosY -= 2;
-  }
-  else if(rightPressed && downPressed && charPosX < canvas.width && charPosY < canvas.height) {
+  } else if (rightPressed && downPressed && charPosX < canvas.width && charPosY < canvas.height) {
     charPosX += 2;
     charPosY += 2;
-  }
-  else if(leftPressed && downPressed && charPosY < canvas.height && charPosX > 0) {
+  } else if (leftPressed && downPressed && charPosY < canvas.height && charPosX > 0) {
     charPosX -= 2;
-    charPosY +=2;
-  }
-  else if (rightPressed && charPosX < canvas.width) {
+    charPosY += 2;
+  } else if (rightPressed && charPosX < canvas.width) {
     charPosX += 2;
   } else if (leftPressed && charPosX > 0) {
     charPosX -= 2;
@@ -84,27 +82,31 @@ function playerMovement() {
   }
 }
 
-var isRunning = true;
-var isPaused = escCounter % 2;
-
-function pauseGame() {
-  if (escCounter > 0 && escPressed) {
-    ctx.font = "40px Arial";
-    ctx.fillStyle = "white";
-    ctx.fillText("PAUSED", 80, 650);
-    isRunning = !isRunning;
-  }
+function howManyTimesEscWasPressed() {
+  ctx.font = "40px Arial";
+  ctx.fillStyle = "white";
+  ctx.fillText(escCounter, 200, 650);
 }
 
+// Every odd times esc is pressed, pause the game
+function pauseGame() {
+  if (escPressed && escCounter % 2 > 0) {
+    ctx.font = "40px Arial";
+    ctx.fillStyle = "white";
+    ctx.fillText("GAME PAUSED", 80, 650);
+    cancelAnimationFrame(playGame);
+  } else if (escPressed && escCounter % 2 == 0) {
+    requestAnimationFrame(playGame);
+  }
+  requestAnimationFrame(pauseGame);
+}
 
 function playGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawChar();
   playerMovement();
-  pauseGame();
-  if (isRunning) {
-    requestAnimationFrame(playGame);
-  }
+  howManyTimesEscWasPressed()
+  requestAnimationFrame(playGame);
 }
 
 playGame();
