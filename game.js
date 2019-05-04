@@ -2,6 +2,7 @@ var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
 var startGame = false;
+var gamePaused = false;
 
 var charRadius = 20;
 
@@ -10,7 +11,7 @@ var leftPressed = false;
 var upPressed = false;
 var downPressed = false;
 var escPressed = false;
-var escCounter = 0;
+var mouseClicked = false;
 
 
 var charPosX = (canvas.width / 2 - charRadius);
@@ -18,6 +19,9 @@ var charPosY = (canvas.height / 2 - charRadius);
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
+document.addEventListener("mousedown", mouseDownHandler, false);
+document.addEventListener("mouseup", mouseUpHandler, false);
+
 
 // Checking which keys are not being pressed
 function keyUpHandler(event) {
@@ -46,7 +50,20 @@ function keyDownHandler(event) {
     downPressed = true;
   } else if (event.key === "Escape") {
     escPressed = true;
-    escCounter++;
+    pauseGame()
+  }
+}
+
+// Check if mouse is being clicked
+function mouseUpHandler(event) {
+  if (event.button === 0) {
+    mouseClicked = false;
+  }
+}
+
+function mouseDownHandler(event) {
+  if (event.button === 0) {
+    mouseClicked = true;
   }
 }
 
@@ -82,31 +99,37 @@ function playerMovement() {
   }
 }
 
-function howManyTimesEscWasPressed() {
-  ctx.font = "40px Arial";
-  ctx.fillStyle = "white";
-  ctx.fillText(escCounter, 200, 650);
+function shootBullet() {
+  if (mouseClicked) {
+    ctx.beginPath();
+    ctx.arc(100, 100, 10, 0, Math.PI * 2, false);
+    ctx.fillStyle = "#0095DD";
+    ctx.fill();
+    ctx.closePath();
+  }
 }
 
-// Every odd times esc is pressed, pause the game
+var animID;
+
 function pauseGame() {
-  if (escPressed && escCounter % 2 > 0) {
+  if (!gamePaused) {
+    gamePaused = true;
+    cancelAnimationFrame(animID)
     ctx.font = "40px Arial";
     ctx.fillStyle = "white";
     ctx.fillText("GAME PAUSED", 80, 650);
-    cancelAnimationFrame(playGame);
-  } else if (escPressed && escCounter % 2 == 0) {
+  } else if (gamePaused) {
+    gamePaused = false;
     requestAnimationFrame(playGame);
   }
-  requestAnimationFrame(pauseGame);
 }
 
 function playGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawChar();
   playerMovement();
-  howManyTimesEscWasPressed()
-  requestAnimationFrame(playGame);
+  shootBullet();
+  animID = requestAnimationFrame(playGame);
 }
 
 playGame();
