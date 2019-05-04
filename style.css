@@ -2,6 +2,12 @@
   cursor: url(images/crosshair.png), auto;
 }
 
+body {
+  background-image: url(images/pagebackground.jpg);
+}
+
 canvas {
-  background-color: yellow;
+  background-image: url(images/tempcanvas.jpg);
+  margin: auto;
+  display: block;
 }
