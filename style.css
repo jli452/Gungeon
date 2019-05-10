@@ -43,25 +43,40 @@ a.button4:hover {
 #container {
   margin: auto;
   width: 1280px;
-  height: 720px;
-  background-color: #72102d;
 }
+
 
 #introheader, img {
   width: 1280px;
   height: 200px;
-  color: white;
-  font-family: Arial;
-  font-size: 20px;
 }
 
 #introdiv {
+  text-align: center;
   color: white;
   font-family: Arial;
   font-size: 20px;
-  margin: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background-color: #72102d;
+  padding-top: 15px;
 }
 
 #center {
   text-align: center;
+}
+
+#playbutton {
+  padding-bottom: 10px;
+}
+
+#footer {
+  font-family: Arial;
+  font-size: 16px;
+  text-align: center;
+  width: 1280px;
+  height: 30px;
+  color: white;
+  background-color: #db5d23;
+  padding-top: 10px;
 }
