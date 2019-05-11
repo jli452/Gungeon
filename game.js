@@ -30,7 +30,15 @@ var char = {
 var gun = {
   posX: (canvas.width / 2),
   posY: (canvas.height / 2)
-}
+};
+
+var bullet = {
+  posX: gun.posX - 4,
+  posY: gun.posY - 4,
+  width: 8,
+  height: 8,
+  speed: 1
+};
 
 
 
@@ -57,7 +65,7 @@ function keyUpHandler(event) {
 
 
 
-// Cheecking which keys are being pressed
+// Checking which keys are being pressed
 function keyDownHandler(event) {
   if (event.key === "d") {
     rightPressed = true;
@@ -101,6 +109,22 @@ function drawChar() {
   ctx.closePath();
 }
 
+function drawGun() {
+  ctx.beginPath();
+  ctx.rect(char.posX - 5, char.posY - 5, 10, 10);
+  ctx.fillStyle = "#FFFFFF";
+  ctx.fill();
+  ctx.closePath();
+}
+
+function fireBullet() {
+  ctx.beginPath();
+  ctx.rect(bullet.posX, bullet.posY, bullet.width, bullet.height);
+  ctx.fillStyle = "red";
+  ctx.fill();
+  ctx.closePath();
+}
+
 function playerMovement() {
   if (rightPressed && upPressed && char.posX < canvas.width && char.posY > 0) {
     char.posX += 2;
@@ -127,11 +151,11 @@ function playerMovement() {
 
 function shootBullet() {
   if (mouseClicked) {
-    ctx.beginPath();
-    ctx.arc(100, 100, 10, 0, Math.PI * 2, false);
-    ctx.fillStyle = "#0095DD";
-    ctx.fill();
-    ctx.closePath();
+
+    while(bullet.posX < canvas.width) {
+      fireBullet();
+      bullet.posX = bullet.posX + bullet.speed;
+    }
   }
 }
 
@@ -153,6 +177,7 @@ function pauseGame() {
 function playGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawChar();
+  drawGun();
   playerMovement();
   shootBullet();
   animID = requestAnimationFrame(playGame);
