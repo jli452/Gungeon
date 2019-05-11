@@ -1,4 +1,3 @@
-
 // TODO:
 // DRAW GUN AS RECTANGLE
 // MAKE GUN FOLLOW CHARACTER
@@ -12,7 +11,7 @@ var startGame = false;
 var gamePaused = false;
 
 var charRadius = 20;
-var gunPosition = charRadius/2;
+var gunPosition = charRadius / 2;
 
 var rightPressed = false;
 var leftPressed = false;
@@ -152,7 +151,7 @@ function playerMovement() {
 function shootBullet() {
   if (mouseClicked) {
 
-    while(bullet.posX < canvas.width) {
+    while (bullet.posX < canvas.width) {
       fireBullet();
       bullet.posX = bullet.posX + bullet.speed;
     }
@@ -167,7 +166,7 @@ function pauseGame() {
     cancelAnimationFrame(animID)
     ctx.font = "40px Arial";
     ctx.fillStyle = "white";
-    ctx.fillText("GAME PAUSED", 80, 650);
+    ctx.fillText("GAME PAUSED", canvas.width / 2.5, canvas.height / 2);
   } else if (gamePaused) {
     gamePaused = false;
     requestAnimationFrame(playGame);
