@@ -1,8 +1,4 @@
-// TODO:
-// DRAW GUN AS RECTANGLE
-// MAKE GUN FOLLOW CHARACTER
-
-
+// i hate this
 
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
@@ -12,8 +8,8 @@ var gamePaused = false;
 var mouseDown = false;
 
 var charRadius = 20;
-var gunPosition = charRadius / 2;
 
+// event variables
 var rightPressed = false;
 var leftPressed = false;
 var upPressed = false;
@@ -22,12 +18,6 @@ var escPressed = false;
 var mouseClicked = false;
 
 var char = {
-  posX: (canvas.width / 2),
-  posY: (canvas.height / 2)
-
-};
-
-var gun = {
   posX: (canvas.width / 2),
   posY: (canvas.height / 2)
 };
@@ -39,8 +29,6 @@ var bullet = {
   height: 10,
   speed: 5
 };
-
-
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
@@ -61,9 +49,6 @@ function keyUpHandler(event) {
     escPressed = false;
   }
 }
-
-
-
 
 // Checking which keys are being pressed
 function keyDownHandler(event) {
@@ -109,6 +94,13 @@ function drawGun() {
   ctx.fillStyle = "#FFFFFF";
   ctx.fill();
   ctx.closePath();
+}
+
+function getCoords(event) {
+  var coorX = event.clientX;
+  var coorY = event.clientY;
+  var slope = (coorY-bullet.posY)/(coorX-bullet.posX)
+  var line = slope * (x - bullet.posX) + bullet.posY
 }
 
 function drawBullet() {
@@ -158,6 +150,7 @@ var animID;
 function pauseGame() {
   if (!gamePaused) {
     gamePaused = true;
+    mouseClicked = false;
     cancelAnimationFrame(animID)
     ctx.beginPath();
     ctx.rect(0, 0, canvas.width, canvas.height);
