@@ -9,6 +9,7 @@ var ctx = canvas.getContext("2d");
 
 var startGame = false;
 var gamePaused = false;
+var mouseDown = false;
 
 var charRadius = 20;
 var gunPosition = charRadius / 2;
@@ -32,11 +33,11 @@ var gun = {
 };
 
 var bullet = {
-  posX: gun.posX - 4,
-  posY: gun.posY - 4,
-  width: 8,
-  height: 8,
-  speed: 1
+  posX: char.posX,
+  posY: char.posY,
+  width: 10,
+  height: 10,
+  speed: 5
 };
 
 
@@ -68,22 +69,15 @@ function keyUpHandler(event) {
 function keyDownHandler(event) {
   if (event.key === "d") {
     rightPressed = true;
-    gun.posX = gun.posX - gunPosition;
   } else if (event.key === "a") {
     leftPressed = true;
-    gun.posX = gun.posX + gunPosition;
   } else if (event.key === "w") {
     upPressed = true;
-    gun.posY = gun.posY - gunPosition;
   } else if (event.key === "s") {
     downPressed = true;
-    gun.posY = gun.posY + gunPosition;
   } else if (event.key === "Escape") {
     escPressed = true;
     pauseGame();
-  } else {
-    gun.posX = char.posX;
-    gun.posY = char.posY;
   }
 }
 
@@ -97,6 +91,7 @@ function mouseUpHandler(event) {
 function mouseDownHandler(event) {
   if (event.button === 0) {
     mouseClicked = true;
+    shootBullet();
   }
 }
 
@@ -116,12 +111,22 @@ function drawGun() {
   ctx.closePath();
 }
 
-function fireBullet() {
+function drawBullet() {
   ctx.beginPath();
   ctx.rect(bullet.posX, bullet.posY, bullet.width, bullet.height);
   ctx.fillStyle = "red";
   ctx.fill();
   ctx.closePath();
+}
+
+function shootBullet() {
+  if (mouseClicked) {
+    mouseDown = true;
+  }
+  if (bullet.posX < canvas.width && mouseDown) {
+    drawBullet();
+    bullet.posX = bullet.posX + bullet.speed;
+  }
 }
 
 function playerMovement() {
@@ -148,22 +153,17 @@ function playerMovement() {
   }
 }
 
-function shootBullet() {
-  if (mouseClicked) {
-
-    while (bullet.posX < canvas.width) {
-      fireBullet();
-      bullet.posX = bullet.posX + bullet.speed;
-    }
-  }
-}
-
 var animID;
 
 function pauseGame() {
   if (!gamePaused) {
     gamePaused = true;
     cancelAnimationFrame(animID)
+    ctx.beginPath();
+    ctx.rect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "rgba(0,0,0,0.75)";
+    ctx.fill();
+    ctx.closePath();
     ctx.font = "40px Arial";
     ctx.fillStyle = "white";
     ctx.fillText("GAME PAUSED", canvas.width / 2.5, canvas.height / 2);
