@@ -1,18 +1,15 @@
-// TODO:
-// DRAW GUN AS RECTANGLE
-// MAKE GUN FOLLOW CHARACTER
-
-
+// i hate this
 
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
 var startGame = false;
 var gamePaused = false;
+var mouseDown = false;
 
 var charRadius = 20;
-var gunPosition = charRadius / 2;
 
+// event variables
 var rightPressed = false;
 var leftPressed = false;
 var upPressed = false;
@@ -23,20 +20,15 @@ var mouseClicked = false;
 var char = {
   posX: (canvas.width / 2),
   posY: (canvas.height / 2)
-
-};
-
-var gun = {
-  posX: (canvas.width / 2),
-  posY: (canvas.height / 2)
 };
 
 var bullet = {
-  posX: gun.posX,
-  posY: gun.posY,
-  width: 8,
-  height: 8,
-  speed: 4
+  posX: char.posX,
+  posY: char.posY,
+  width: 10,
+  height: 10,
+  speed: 5
+
 };
 
 
@@ -61,29 +53,19 @@ function keyUpHandler(event) {
   }
 }
 
-
-
-
 // Checking which keys are being pressed
 function keyDownHandler(event) {
   if (event.key === "d") {
     rightPressed = true;
-    gun.posX = gun.posX - gunPosition;
   } else if (event.key === "a") {
     leftPressed = true;
-    gun.posX = gun.posX + gunPosition;
   } else if (event.key === "w") {
     upPressed = true;
-    gun.posY = gun.posY - gunPosition;
   } else if (event.key === "s") {
     downPressed = true;
-    gun.posY = gun.posY + gunPosition;
   } else if (event.key === "Escape") {
     escPressed = true;
     pauseGame();
-  } else {
-    gun.posX = char.posX;
-    gun.posY = char.posY;
   }
 }
 
@@ -97,6 +79,7 @@ function mouseUpHandler(event) {
 function mouseDownHandler(event) {
   if (event.button === 0) {
     mouseClicked = true;
+    shootBullet();
   }
 }
 
@@ -104,22 +87,6 @@ function drawChar() {
   ctx.beginPath();
   ctx.arc(char.posX, char.posY, charRadius, 0, Math.PI * 2, false);
   ctx.fillStyle = "#0095DD";
-  ctx.fill();
-  ctx.closePath();
-}
-
-function drawGun() {
-  ctx.beginPath();
-  ctx.rect(char.posX - 5, char.posY - 5, 10, 10);
-  ctx.fillStyle = "#FFFFFF";
-  ctx.fill();
-  ctx.closePath();
-}
-
-function fireBullet() {
-  ctx.beginPath();
-  ctx.rect(bullet.posX, bullet.posY, bullet.width, bullet.height);
-  ctx.fillStyle = "red";
   ctx.fill();
   ctx.closePath();
 }
@@ -148,25 +115,68 @@ function playerMovement() {
   }
 }
 
+function drawGun() {
+  ctx.beginPath();
+  ctx.rect(char.posX - 5, char.posY - 5, 10, 10);
+  ctx.fillStyle = "#FFFFFF";
+  ctx.fill();
+  ctx.closePath();
+}
+
+function getCoords(event) {
+  var coorX = event.clientX;
+  var coorY = event.clientY;
+  var slope = (coorY-bullet.posY)/(coorX-bullet.posX)
+  var line = slope * (x - bullet.posX) + bullet.posY
+}
+
+function drawBullet() {
+  ctx.beginPath();
+  ctx.rect(bullet.posX, bullet.posY, bullet.width, bullet.height);
+  bullet.posX = char.posX;
+  bullet.posY = char.posY;
+  ctx.fillStyle = "red";
+  ctx.fill();
+  ctx.closePath();
+}
+
+function bulletUpdate() {
+  bullet.posX = char.posX;
+  bullet.posY = char.posY;
+}
+
 function shootBullet() {
   if (mouseClicked) {
 
-    while (bullet.posX < 1280) {
+    mouseDown = true;
+  }
 
-      fireBullet();
-      bullet.posX = bullet.posX + bullet.speed;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (bullet.posX < canvas.width && mouseDown) {
+    bullet.posX = bullet.posX + bullet.speed;
+    bullet.speed = bullet.speed + 10;
+    drawBullet();
 
-    }
+    bulletUpdate();
   }
 }
+
+//function
+
+
+
 
 var animID;
 
 function pauseGame() {
   if (!gamePaused) {
     gamePaused = true;
+    mouseClicked = false;
     cancelAnimationFrame(animID)
+    ctx.beginPath();
+    ctx.rect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "rgba(0,0,0,0.75)";
+    ctx.fill();
+    ctx.closePath();
     ctx.font = "40px Arial";
     ctx.fillStyle = "white";
     ctx.fillText("GAME PAUSED", canvas.width / 2.5, canvas.height / 2);
