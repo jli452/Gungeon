@@ -32,11 +32,12 @@ var gun = {
 };
 
 var bullet = {
-  posX: gun.posX - 4,
-  posY: gun.posY - 4,
+  posX: gun.posX,
+  posY: gun.posY,
   width: 8,
   height: 8,
-  speed: 1
+  speed: 1,
+  radius: 5
 };
 
 
@@ -118,7 +119,7 @@ function drawGun() {
 
 function fireBullet() {
   ctx.beginPath();
-  ctx.rect(bullet.posX, bullet.posY, bullet.width, bullet.height);
+  ctx.arc(char.posX, char.posY, bullet.radius, 0, Math.PI * 2, false);
   ctx.fillStyle = "red";
   ctx.fill();
   ctx.closePath();
@@ -150,7 +151,6 @@ function playerMovement() {
 
 function shootBullet() {
   if (mouseClicked) {
-
     while (bullet.posX < canvas.width) {
       fireBullet();
       bullet.posX = bullet.posX + bullet.speed;
