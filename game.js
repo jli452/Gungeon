@@ -32,11 +32,11 @@ var gun = {
 };
 
 var bullet = {
-  posX: gun.posX - 4,
-  posY: gun.posY - 4,
+  posX: gun.posX,
+  posY: gun.posY,
   width: 8,
   height: 8,
-  speed: 1
+  speed: 4
 };
 
 
@@ -151,9 +151,12 @@ function playerMovement() {
 function shootBullet() {
   if (mouseClicked) {
 
-    while (bullet.posX < canvas.width) {
+    while (bullet.posX < 1280) {
+
       fireBullet();
       bullet.posX = bullet.posX + bullet.speed;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     }
   }
 }
