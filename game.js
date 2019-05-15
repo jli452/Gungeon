@@ -1,8 +1,4 @@
-// TODO:
-// DRAW GUN AS RECTANGLE
-// MAKE GUN FOLLOW CHARACTER
-
-
+// i hate this
 
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
@@ -11,8 +7,8 @@ var startGame = false;
 var gamePaused = false;
 
 var charRadius = 20;
-var gunPosition = charRadius / 2;
 
+// event variables
 var rightPressed = false;
 var leftPressed = false;
 var upPressed = false;
@@ -23,29 +19,20 @@ var mouseClicked = false;
 var char = {
   posX: (canvas.width / 2),
   posY: (canvas.height / 2)
-
-};
-
-var gun = {
-  posX: (canvas.width / 2),
-  posY: (canvas.height / 2)
 };
 
 var bullet = {
-  posX: gun.posX,
-  posY: gun.posY,
-  width: 8,
-  height: 8,
-  speed: 1,
-  radius: 5
+  posX: char.posX,
+  posY: char.posY,
+  width: 10,
+  height: 10,
+  speed: 5
 };
-
-
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
-document.addEventListener("mousedown", mouseDownHandler, false);
-document.addEventListener("mouseup", mouseUpHandler, false);
+canvas.addEventListener("mousedown", mouseDownHandler, false);
+canvas.addEventListener("mouseup", mouseUpHandler, false);
 
 // Checking which keys are not being pressed
 function keyUpHandler(event) {
@@ -62,29 +49,19 @@ function keyUpHandler(event) {
   }
 }
 
-
-
-
 // Checking which keys are being pressed
 function keyDownHandler(event) {
   if (event.key === "d") {
     rightPressed = true;
-    gun.posX = gun.posX - gunPosition;
   } else if (event.key === "a") {
     leftPressed = true;
-    gun.posX = gun.posX + gunPosition;
   } else if (event.key === "w") {
     upPressed = true;
-    gun.posY = gun.posY - gunPosition;
   } else if (event.key === "s") {
     downPressed = true;
-    gun.posY = gun.posY + gunPosition;
   } else if (event.key === "Escape") {
     escPressed = true;
     pauseGame();
-  } else {
-    gun.posX = char.posX;
-    gun.posY = char.posY;
   }
 }
 
@@ -117,13 +94,30 @@ function drawGun() {
   ctx.closePath();
 }
 
-function fireBullet() {
+function getCoords(event) {
+  var coorX = event.clientX;
+  var coorY = event.clientY;
+  var slope = (coorY-bullet.posY)/(coorX-bullet.posX)
+  var line = slope * (x - bullet.posX) + bullet.posY
+}
+
+function drawBullet() {
   ctx.beginPath();
-  ctx.arc(char.posX, char.posY, bullet.radius, 0, Math.PI * 2, false);
+  ctx.rect(bullet.posX, bullet.posY, bullet.width, bullet.height);
   ctx.fillStyle = "red";
   ctx.fill();
   ctx.closePath();
 }
+
+function shootBullet() {
+  if (mouseClicked) {
+    if (bullet.posX < canvas.width) {
+      drawBullet();
+      bullet.posX = bullet.posX + bullet.speed;
+    }
+  }
+}
+
 
 function playerMovement() {
   if (rightPressed && upPressed && char.posX < canvas.width && char.posY > 0) {
@@ -149,21 +143,17 @@ function playerMovement() {
   }
 }
 
-function shootBullet() {
-  if (mouseClicked) {
-    while (bullet.posX < canvas.width) {
-      fireBullet();
-      bullet.posX = bullet.posX + bullet.speed;
-    }
-  }
-}
-
 var animID;
 
 function pauseGame() {
   if (!gamePaused) {
     gamePaused = true;
     cancelAnimationFrame(animID)
+    ctx.beginPath();
+    ctx.rect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "rgba(0,0,0,0.75)";
+    ctx.fill();
+    ctx.closePath();
     ctx.font = "40px Arial";
     ctx.fillStyle = "white";
     ctx.fillText("GAME PAUSED", canvas.width / 2.5, canvas.height / 2);
