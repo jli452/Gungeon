@@ -115,6 +115,33 @@ function playerMovement() {
   }
 }
 
+function bulletMovement() {
+  if (rightPressed && upPressed && bullet.posX < canvas.width && bullet.posY > 0) {
+    bullet.posX -= 2;
+    bullet.posY += 2;
+  } else if (leftPressed && upPressed && bullet.posX > 0 && bullet.posY > 0) {
+    bullet.posX += 2;
+    bullet.posY += 2;
+  } else if (rightPressed && downPressed && bullet.posX < canvas.width && bullet.posY < canvas.height) {
+    bullet.posX -= 2;
+    bullet.posY -= 2;
+  } else if (leftPressed && downPressed && bullet.posY < canvas.height && bullet.posX > 0) {
+    bullet.posX += 2;
+    bullet.posY -= 2;
+  } else if (rightPressed && bullet.posX < canvas.width) {
+    bullet.posX -= 2;
+  
+  } else if (leftPressed && bullet.posX > 0) {
+    bullet.posX += 2;
+  } else if (upPressed && bullet.posY > 0) {
+    bullet.posY += 2;
+  } else if (downPressed && bullet.posY < canvas.height) {
+    bullet.posY -= 2;
+  }
+
+}
+
+
 function drawGun() {
   ctx.beginPath();
   ctx.rect(char.posX - 5, char.posY - 5, 10, 10);
@@ -155,8 +182,6 @@ function shootBullet() {
     bullet.posX = bullet.posX + bullet.speed;
     bullet.speed = bullet.speed + 10;
     drawBullet();
-
-    bulletUpdate();
   }
 }
 
@@ -192,6 +217,7 @@ function playGame() {
   drawGun();
   playerMovement();
   shootBullet();
+  bulletMovement();
   animID = requestAnimationFrame(playGame);
 }
 
