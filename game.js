@@ -150,14 +150,21 @@ function shootBullet() {
 
     mouseDown = true;
   }
+  if (!mouseClicked) {
+    mouseDown = false;
+  }
 
-  if (bullet.posX < canvas.width && mouseDown) {
+  if (mouseDown) {
     bullet.posX = bullet.posX + bullet.speed;
     bullet.speed = bullet.speed + 10;
     drawBullet();
-
-    bulletUpdate();
+  } 
+  if (!mouseDown){
+      bullet.speed = 0;
+      bulletUpdate();
+      return;
   }
+
 }
 
 //function
