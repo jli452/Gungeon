@@ -35,8 +35,8 @@ var bullet = {
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
-document.addEventListener("mousedown", mouseDownHandler, false);
-document.addEventListener("mouseup", mouseUpHandler, false);
+canvas.addEventListener("mousedown", mouseDownHandler, false);
+canvas.addEventListener("mouseup", mouseUpHandler, getCoords, false);
 
 // Checking which keys are not being pressed
 function keyUpHandler(event) {
@@ -115,6 +115,32 @@ function playerMovement() {
   }
 }
 
+function bulletMovement() {
+  if (rightPressed && upPressed && bullet.posX < canvas.width && bullet.posY > 0) {
+    bullet.posX -= 2;
+    bullet.posY += 2;
+  } else if (leftPressed && upPressed && bullet.posX > 0 && bullet.posY > 0) {
+    bullet.posX += 2;
+    bullet.posY += 2;
+  } else if (rightPressed && downPressed && bullet.posX < canvas.width && bullet.posY < canvas.height) {
+    bullet.posX -= 2;
+    bullet.posY -= 2;
+  } else if (leftPressed && downPressed && bullet.posY < canvas.height && bullet.posX > 0) {
+    bullet.posX += 2;
+    bullet.posY -= 2;
+  } else if (rightPressed && bullet.posX < canvas.width) {
+    bullet.posX -= 2;
+  } else if (leftPressed && bullet.posX > 0) {
+    bullet.posX += 2;
+  } else if (upPressed && bullet.posY > 0) {
+    bullet.posY += 2;
+  } else if (downPressed && bullet.posY < canvas.height) {
+    bullet.posY -= 2;
+  }
+
+}
+
+
 function drawGun() {
   ctx.beginPath();
   ctx.rect(char.posX - 5, char.posY - 5, 10, 10);
@@ -123,11 +149,13 @@ function drawGun() {
   ctx.closePath();
 }
 
+
+
 function getCoords(event) {
-  var coorX = event.clientX;
-  var coorY = event.clientY;
-  var slope = (coorY-bullet.posY)/(coorX-bullet.posX)
-  var line = slope * (x - bullet.posX) + bullet.posY
+  var coorX
+  var coorY
+  coorX = event.offsetX;
+  coorY = event.offsetY;
 }
 
 function drawBullet() {
@@ -147,29 +175,37 @@ function bulletUpdate() {
 
 function shootBullet() {
   if (mouseClicked) {
-
     mouseDown = true;
+    console.log(event.offsetY);
   }
   if (!mouseClicked) {
     mouseDown = false;
   }
 
+
   if (mouseDown) {
     bullet.posX = bullet.posX + bullet.speed;
     bullet.speed = bullet.speed + 10;
     drawBullet();
-  } 
+  }
   if (!mouseDown){
       bullet.speed = 0;
       bulletUpdate();
       return;
+
+  if (bullet.posX < canvas.width && bullet.posX > 0 && bullet.posY > 0 && bullet.posY < canvas.height && mouseDown) {
+    var coorX = event.offsetX;
+    var coorY = event.offsetY;
+    var slope = (coorY-bullet.posY)/(coorX-bullet.posX);
+    bullet.posX += 0.1
+    bullet.posY += slope * 0.1
+    drawBullet();
+
   }
 
 }
 
 //function
-
-
 
 
 var animID;
@@ -199,6 +235,7 @@ function playGame() {
   drawGun();
   playerMovement();
   shootBullet();
+  bulletMovement();
   animID = requestAnimationFrame(playGame);
 }
 
