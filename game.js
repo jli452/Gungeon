@@ -83,6 +83,13 @@ function mouseDownHandler(event) {
   }
 }
 
+// var img = new Image();
+// img.onload = function() {
+//   ctx.drawImage(img, char.posX - charRadius / 2, char.posY - charRadius / 2, 300, 300);
+// }
+//
+// img.src = "images/char.png";
+
 function drawChar() {
   ctx.beginPath();
   ctx.arc(char.posX, char.posY, charRadius, 0, Math.PI * 2, false);
