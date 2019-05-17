@@ -1,3 +1,4 @@
+
 // i hate this
 
 var canvas = document.getElementById("myCanvas");
@@ -82,6 +83,13 @@ function mouseDownHandler(event) {
     shootBullet();
   }
 }
+
+// var img = new Image();
+// img.onload = function() {
+//   ctx.drawImage(img, char.posX - charRadius / 2, char.posY - charRadius / 2, 300, 300);
+// }
+//
+// img.src = "images/char.png";
 
 function drawChar() {
   ctx.beginPath();
@@ -178,6 +186,20 @@ function shootBullet() {
     mouseDown = true;
     console.log(event.offsetY);
   }
+  if (!mouseClicked) {
+    mouseDown = false;
+  }
+
+
+  if (mouseDown) {
+    bullet.posX = bullet.posX + bullet.speed;
+    bullet.speed = bullet.speed + 10;
+    drawBullet();
+  }
+  if (!mouseDown){
+      bullet.speed = 0;
+      bulletUpdate();
+      return;
 
   if (bullet.posX < canvas.width && bullet.posX > 0 && bullet.posY > 0 && bullet.posY < canvas.height && mouseDown) {
     var coorX = event.offsetX;
@@ -186,7 +208,9 @@ function shootBullet() {
     bullet.posX += 0.1
     bullet.posY += slope * 0.1
     drawBullet();
+
   }
+
 }
 
 //function
