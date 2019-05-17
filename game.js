@@ -37,7 +37,7 @@ var bullet = {
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 canvas.addEventListener("mousedown", mouseDownHandler, false);
-canvas.addEventListener("mouseup", mouseUpHandler, getCoords, false);
+canvas.addEventListener("mouseup", mouseUpHandler, false);
 
 // Checking which keys are not being pressed
 function keyUpHandler(event) {
@@ -84,19 +84,11 @@ function mouseDownHandler(event) {
   }
 }
 
-// var img = new Image();
-// img.onload = function() {
-//   ctx.drawImage(img, char.posX - charRadius / 2, char.posY - charRadius / 2, 300, 300);
-// }
-//
-// img.src = "images/char.png";
 
 function drawChar() {
-  ctx.beginPath();
-  ctx.arc(char.posX, char.posY, charRadius, 0, Math.PI * 2, false);
-  ctx.fillStyle = "#0095DD";
-  ctx.fill();
-  ctx.closePath();
+  var img = new Image();
+  img.src = "images/char.png";
+  ctx.drawImage(img, char.posX, char.posY, 150, 150);
 }
 
 function playerMovement() {
@@ -151,7 +143,7 @@ function bulletMovement() {
 
 function drawGun() {
   ctx.beginPath();
-  ctx.rect(char.posX - 5, char.posY - 5, 10, 10);
+  ctx.rect(char.posX +90, char.posY+90, 20, 10);
   ctx.fillStyle = "#FFFFFF";
   ctx.fill();
   ctx.closePath();
@@ -201,13 +193,13 @@ function shootBullet() {
       bulletUpdate();
       return;
 
-  if (bullet.posX < canvas.width && bullet.posX > 0 && bullet.posY > 0 && bullet.posY < canvas.height && mouseDown) {
-    var coorX = event.offsetX;
-    var coorY = event.offsetY;
-    var slope = (coorY-bullet.posY)/(coorX-bullet.posX);
-    bullet.posX += 0.1
-    bullet.posY += slope * 0.1
-    drawBullet();
+  // if (bullet.posX < canvas.width && bullet.posX > 0 && bullet.posY > 0 && bullet.posY < canvas.height && mouseDown) {
+  //   var coorX = event.offsetX;
+  //   var coorY = event.offsetY;
+  //   var slope = (coorY-bullet.posY)/(coorX-bullet.posX);
+  //   bullet.posX += 0.1
+  //   bullet.posY += slope * 0.1
+  //   drawBullet();
 
   }
 
