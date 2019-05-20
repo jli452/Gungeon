@@ -85,32 +85,53 @@ function mouseDownHandler(event) {
 }
 
 
-function drawChar() {
+// function drawChar() {
+//   var img = new Image();
+//   img.src = "images/charright.png";
+//   ctx.drawImage(img, char.posX, char.posY, 150, 150);
+// }
+
+function drawCharRight() {
   var img = new Image();
-  img.src = "images/char.png";
+  img.src = "images/charright.png";
+  ctx.drawImage(img, char.posX, char.posY, 150, 150);
+}
+
+function drawCharLeft() {
+  var img = new Image();
+  img.src = "images/charleft.png";
   ctx.drawImage(img, char.posX, char.posY, 150, 150);
 }
 
 function playerMovement() {
+  drawCharRight();
   if (rightPressed && upPressed && char.posX < canvas.width && char.posY > 0) {
+    drawCharRight();
     char.posX += 2;
     char.posY -= 2;
   } else if (leftPressed && upPressed && char.posX > 0 && char.posY > 0) {
+    drawCharLeft();
     char.posX -= 2;
     char.posY -= 2;
   } else if (rightPressed && downPressed && char.posX < canvas.width && char.posY < canvas.height) {
+    drawCharRight();
     char.posX += 2;
     char.posY += 2;
   } else if (leftPressed && downPressed && char.posY < canvas.height && char.posX > 0) {
+    drawCharLeft();
     char.posX -= 2;
     char.posY += 2;
   } else if (rightPressed && char.posX < canvas.width) {
+    drawCharRight();
     char.posX += 2;
   } else if (leftPressed && char.posX > 0) {
+    drawCharLeft();
     char.posX -= 2;
   } else if (upPressed && char.posY > 0) {
+    drawCharRight();
     char.posY -= 2;
   } else if (downPressed && char.posY < canvas.height) {
+    drawCharRight();
     char.posY += 2;
   }
 }
@@ -188,7 +209,7 @@ function shootBullet() {
     bullet.speed = bullet.speed + 10;
     drawBullet();
   }
-  if (!mouseDown){
+  if (!mouseDown) {
       bullet.speed = 0;
       bulletUpdate();
       return;
@@ -231,8 +252,8 @@ function pauseGame() {
 
 function playGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawChar();
   drawGun();
+  // drawChar();
   playerMovement();
   shootBullet();
   bulletMovement();
