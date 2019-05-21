@@ -1,4 +1,3 @@
-
 // i hate this
 
 var canvas = document.getElementById("myCanvas");
@@ -104,7 +103,6 @@ function drawCharLeft() {
 }
 
 function playerMovement() {
-  drawCharRight();
   if (rightPressed && upPressed && char.posX < canvas.width && char.posY > 0) {
     drawCharRight();
     char.posX += 2;
@@ -133,6 +131,8 @@ function playerMovement() {
   } else if (downPressed && char.posY < canvas.height) {
     drawCharRight();
     char.posY += 2;
+  } else {
+    drawCharRight();
   }
 }
 
@@ -164,7 +164,7 @@ function bulletMovement() {
 
 function drawGun() {
   ctx.beginPath();
-  ctx.rect(char.posX +90, char.posY+90, 20, 10);
+  ctx.rect(char.posX + 90, char.posY + 90, 20, 10);
   ctx.fillStyle = "#FFFFFF";
   ctx.fill();
   ctx.closePath();
@@ -210,18 +210,83 @@ function shootBullet() {
     drawBullet();
   }
   if (!mouseDown) {
-      bullet.speed = 0;
-      bulletUpdate();
-      return;
+    bullet.speed = 0;
+    bulletUpdate();
+    return;
 
-  // if (bullet.posX < canvas.width && bullet.posX > 0 && bullet.posY > 0 && bullet.posY < canvas.height && mouseDown) {
-  //   var coorX = event.offsetX;
-  //   var coorY = event.offsetY;
-  //   var slope = (coorY-bullet.posY)/(coorX-bullet.posX);
-  //   bullet.posX += 0.1
-  //   bullet.posY += slope * 0.1
-  //   drawBullet();
+    // if (bullet.posX < canvas.width && bullet.posX > 0 && bullet.posY > 0 && bullet.posY < canvas.height && mouseDown) {
+    //   var coorX = event.offsetX;
+    //   var coorY = event.offsetY;
+    //   var slope = (coorY-bullet.posY)/(coorX-bullet.posX);
+    //   bullet.posX += 0.1
+    //   bullet.posY += slope * 0.1
+    //   drawBullet();
+  }
+}
 
+// newly spawned objects start at Y=25
+var spawnLineX = 1280;
+// spawn a new object every 1500ms
+var spawnRate = 500;
+// set how fast the objects will fall
+var spawnRateOfDescent = 2.5;
+// when was the last object spawned
+var lastSpawn = -1;
+// this array holds all spawned object
+var objects = [];
+// save the starting time (used to calc elapsed time)
+var startTime = Date.now();
+
+function spawnRandomObject() {
+
+  // select a random type for this new object
+  var t;
+
+
+  if (Math.random() < 0.50) {
+    t = "red";
+  } else {
+    t = "blue";
+  }
+
+  // create the new object
+  var object = {
+    // set this objects type
+    type: t,
+    // set x randomly but at least 15px off the canvas edges
+    x: spawnLineX,
+    // set x to start on the line where objects are spawned
+    y: Math.random() * (canvas.width - 30) + 15,
+  }
+
+  // add the new object to the objects[] array
+  objects.push(object);
+}
+
+
+
+function spawnMonsters() {
+  // get the elapsed time
+  var time = Date.now();
+  // see if its time to spawn a new object
+  if (time > (lastSpawn + spawnRate)) {
+    lastSpawn = time;
+    spawnRandomObject();
+  }
+  // draw the line where new objects are spawned
+  ctx.beginPath();
+  ctx.moveTo(spawnLineX, 0);
+  ctx.lineTo(spawnLineX, canvas.height);
+  ctx.stroke();
+  // move each object down the canvas
+  for (var i = 0; i < objects.length; i++) {
+    var object = objects[i];
+    object.x -= spawnRateOfDescent;
+    ctx.beginPath();
+    ctx.arc(object.x, object.y, 8, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.fillStyle = object.type;
+    ctx.fill();
   }
 
 }
@@ -253,10 +318,10 @@ function pauseGame() {
 function playGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawGun();
-  // drawChar();
   playerMovement();
   shootBullet();
   bulletMovement();
+  spawnMonsters();
   animID = requestAnimationFrame(playGame);
 }
 
