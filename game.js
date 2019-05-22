@@ -181,7 +181,7 @@ function getCoords(event) {
 
 function drawBullet() {
   ctx.beginPath();
-  ctx.rect(bullet.posX, bullet.posY, bullet.width, bullet.height);
+  ctx.rect(bullet.posX + 90, bullet.posY + 90, bullet.width, bullet.height);
   bullet.posX = char.posX;
   bullet.posY = char.posY;
   ctx.fillStyle = "red";
@@ -197,7 +197,7 @@ function bulletUpdate() {
 function shootBullet() {
   if (mouseClicked) {
     mouseDown = true;
-    console.log(event.offsetY);
+    // console.log(event.offsetY);
   }
   if (!mouseClicked) {
     mouseDown = false;
@@ -208,22 +208,19 @@ function shootBullet() {
     bullet.posX = bullet.posX + bullet.speed;
     bullet.speed = bullet.speed + 10;
     drawBullet();
+    // var coorX = event.offsetX;
+    // var coorY = event.offsetY;
+    // var slope = (coorY-bullet.posY)/(coorX-bullet.posX);
+    // bullet.posX += 0.1
+    // bullet.posY += slope * 0.1
+    // drawBullet();
   }
   if (!mouseDown) {
     bullet.speed = 0;
     bulletUpdate();
     return;
-
-    // if (bullet.posX < canvas.width && bullet.posX > 0 && bullet.posY > 0 && bullet.posY < canvas.height && mouseDown) {
-    //   var coorX = event.offsetX;
-    //   var coorY = event.offsetY;
-    //   var slope = (coorY-bullet.posY)/(coorX-bullet.posX);
-    //   bullet.posX += 0.1
-    //   bullet.posY += slope * 0.1
-    //   drawBullet();
-  }
 }
-
+}
 // newly spawned objects start at Y=25
 var spawnLineX = 1280;
 // spawn a new object every 1500ms
