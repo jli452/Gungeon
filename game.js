@@ -22,21 +22,42 @@ var char = {
   posY: (canvas.height / 2)
 };
 
-var bullet = {
-  posX: char.posX,
-  posY: char.posY,
-  width: 10,
-  height: 10,
-  speed: 5
+function Bullet(m) {
+  this.posX = char.posX;
+  this.posY = char.posY;
+  this.width = 10;
+  this.height = 10;
+  this.speed = 1;
+  this.slope = m;
+}
 
-};
-
-
+var bullets = [];
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
-canvas.addEventListener("mousedown", mouseDownHandler, false);
-canvas.addEventListener("mouseup", mouseUpHandler, false);
+canvas.addEventListener("click", drawBullet);
+
+
+function drawBullet(event) {
+  let coorX = event.offsetX;
+  let coorY = event.offsetY;
+  let slope = (coorY - char.posY) / (coorX - char.posX);
+  console.log(slope);
+  bullets.push(new Bullet(slope));
+}
+
+function shootBullet() {
+  for (i = 0; i < bullets.length; i++) {
+    bullet = bullets[i];
+    ctx.beginPath();
+    ctx.rect(bullet.posX + 20, bullet.posY, bullet.width, bullet.height);
+    ctx.fillStyle = "red";
+    ctx.fill();
+    ctx.closePath();
+    bullet.posY += bullet.slope * bullet.speed;
+    bullet.posX += bullet.speed;
+  }
+}
 
 // Checking which keys are not being pressed
 function keyUpHandler(event) {
@@ -69,37 +90,16 @@ function keyDownHandler(event) {
   }
 }
 
-// Check if mouse is being clicked
-function mouseUpHandler(event) {
-  if (event.button === 0) {
-    mouseClicked = false;
-  }
-}
-
-function mouseDownHandler(event) {
-  if (event.button === 0) {
-    mouseClicked = true;
-    shootBullet();
-  }
-}
-
-
-// function drawChar() {
-//   var img = new Image();
-//   img.src = "images/charright.png";
-//   ctx.drawImage(img, char.posX, char.posY, 150, 150);
-// }
-
 function drawCharRight() {
   var img = new Image();
   img.src = "images/charright.png";
-  ctx.drawImage(img, char.posX, char.posY, 150, 150);
+  ctx.drawImage(img, char.posX - 90, char.posY - 90, 150, 150);
 }
 
 function drawCharLeft() {
   var img = new Image();
   img.src = "images/charleft.png";
-  ctx.drawImage(img, char.posX, char.posY, 150, 150);
+  ctx.drawImage(img, char.posX - 90, char.posY - 90, 150, 150);
 }
 
 function playerMovement() {
@@ -136,91 +136,14 @@ function playerMovement() {
   }
 }
 
-function bulletMovement() {
-  if (rightPressed && upPressed && bullet.posX < canvas.width && bullet.posY > 0) {
-    bullet.posX -= 2;
-    bullet.posY += 2;
-  } else if (leftPressed && upPressed && bullet.posX > 0 && bullet.posY > 0) {
-    bullet.posX += 2;
-    bullet.posY += 2;
-  } else if (rightPressed && downPressed && bullet.posX < canvas.width && bullet.posY < canvas.height) {
-    bullet.posX -= 2;
-    bullet.posY -= 2;
-  } else if (leftPressed && downPressed && bullet.posY < canvas.height && bullet.posX > 0) {
-    bullet.posX += 2;
-    bullet.posY -= 2;
-  } else if (rightPressed && bullet.posX < canvas.width) {
-    bullet.posX -= 2;
-  } else if (leftPressed && bullet.posX > 0) {
-    bullet.posX += 2;
-  } else if (upPressed && bullet.posY > 0) {
-    bullet.posY += 2;
-  } else if (downPressed && bullet.posY < canvas.height) {
-    bullet.posY -= 2;
-  }
-
-}
-
-
 function drawGun() {
   ctx.beginPath();
-  ctx.rect(char.posX + 90, char.posY + 90, 20, 10);
+  ctx.rect(char.posX, char.posY, 20, 10);
   ctx.fillStyle = "#FFFFFF";
   ctx.fill();
   ctx.closePath();
 }
 
-
-
-function getCoords(event) {
-  var coorX
-  var coorY
-  coorX = event.offsetX;
-  coorY = event.offsetY;
-}
-
-function drawBullet() {
-  ctx.beginPath();
-  ctx.rect(bullet.posX + 90, bullet.posY + 90, bullet.width, bullet.height);
-  bullet.posX = char.posX;
-  bullet.posY = char.posY;
-  ctx.fillStyle = "red";
-  ctx.fill();
-  ctx.closePath();
-}
-
-function bulletUpdate() {
-  bullet.posX = char.posX;
-  bullet.posY = char.posY;
-}
-
-function shootBullet() {
-  if (mouseClicked) {
-    mouseDown = true;
-    // console.log(event.offsetY);
-  }
-  if (!mouseClicked) {
-    mouseDown = false;
-  }
-
-
-  if (mouseDown) {
-    bullet.posX = bullet.posX + bullet.speed;
-    bullet.speed = bullet.speed + 10;
-    drawBullet();
-    // var coorX = event.offsetX;
-    // var coorY = event.offsetY;
-    // var slope = (coorY-bullet.posY)/(coorX-bullet.posX);
-    // bullet.posX += 0.1
-    // bullet.posY += slope * 0.1
-    // drawBullet();
-  }
-  if (!mouseDown) {
-    bullet.speed = 0;
-    bulletUpdate();
-    return;
-}
-}
 // newly spawned objects start at Y=25
 var spawnLineX = 1280;
 // spawn a new object every 1500ms
@@ -235,17 +158,13 @@ var objects = [];
 var startTime = Date.now();
 
 function spawnRandomObject() {
-
   // select a random type for this new object
   var t;
-
-
   if (Math.random() < 0.50) {
     t = "red";
   } else {
     t = "blue";
   }
-
   // create the new object
   var object = {
     // set this objects type
@@ -259,8 +178,6 @@ function spawnRandomObject() {
   // add the new object to the objects[] array
   objects.push(object);
 }
-
-
 
 function spawnMonsters() {
   // get the elapsed time
@@ -288,15 +205,11 @@ function spawnMonsters() {
 
 }
 
-//function
-
-
 var animID;
-
 function pauseGame() {
   if (!gamePaused) {
+    canvas.removeEventListener("click", drawBullet); //Prevent spam clicking bullets while paused
     gamePaused = true;
-    mouseClicked = false;
     cancelAnimationFrame(animID)
     ctx.beginPath();
     ctx.rect(0, 0, canvas.width, canvas.height);
@@ -308,6 +221,7 @@ function pauseGame() {
     ctx.fillText("GAME PAUSED", canvas.width / 2.5, canvas.height / 2);
   } else if (gamePaused) {
     gamePaused = false;
+    canvas.addEventListener("click", drawBullet); //add back the ability to click to spawn bullets
     requestAnimationFrame(playGame);
   }
 }
@@ -317,7 +231,6 @@ function playGame() {
   drawGun();
   playerMovement();
   shootBullet();
-  bulletMovement();
   spawnMonsters();
   animID = requestAnimationFrame(playGame);
 }
