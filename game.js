@@ -27,7 +27,7 @@ function Bullet(m) {
   this.posY = char.posY;
   this.width = 10;
   this.height = 10;
-  this.speed = 1;
+  this.speed = 6;
   this.slope = m;
 }
 
@@ -42,9 +42,19 @@ function drawBullet(event) {
   let coorX = event.offsetX;
   let coorY = event.offsetY;
   let slope = (coorY - char.posY) / (coorX - char.posX);
+  console.log(coorX);
+  console.log(char.posX);
   console.log(slope);
   bullets.push(new Bullet(slope));
+  // if (coorX < char.posX) {
+  //   bullet.posY -= bullet.slope * bullet.speed;
+  //   bullet.posX -= bullet.speed;
+  // } else {
+  //   bullet.posY += bullet.slope * bullet.speed;
+  //   bullet.posX += bullet.speed;
+  // }
 }
+
 
 function shootBullet() {
   for (i = 0; i < bullets.length; i++) {
@@ -54,8 +64,10 @@ function shootBullet() {
     ctx.fillStyle = "red";
     ctx.fill();
     ctx.closePath();
-    bullet.posY += bullet.slope * bullet.speed;
-    bullet.posX += bullet.speed;
+    bullet.posY -= bullet.slope * bullet.speed;   // <=== for shooting left
+    bullet.posX -= bullet.speed;
+    // bullet.posY += bullet.slope * bullet.speed;     <=== for shooting right
+    // bullet.posX += bullet.speed;
   }
 }
 
@@ -206,6 +218,7 @@ function spawnMonsters() {
 }
 
 var animID;
+
 function pauseGame() {
   if (!gamePaused) {
     canvas.removeEventListener("click", drawBullet); //Prevent spam clicking bullets while paused
