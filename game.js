@@ -22,12 +22,12 @@ var char = {
   posY: (canvas.height / 2)
 };
 
-function Bullet(m) {
+function Bullet(m, speed) {
   this.posX = char.posX;
   this.posY = char.posY;
   this.width = 10;
   this.height = 10;
-  this.speed = 6;
+  this.speed = speed;
   this.slope = m;
 }
 
@@ -42,17 +42,19 @@ function drawBullet(event) {
   let coorX = event.offsetX;
   let coorY = event.offsetY;
   let slope = (coorY - char.posY) / (coorX - char.posX);
-  console.log(coorX);
-  console.log(char.posX);
   console.log(slope);
-  bullets.push(new Bullet(slope));
-  // if (coorX < char.posX) {
-  //   bullet.posY -= bullet.slope * bullet.speed;
-  //   bullet.posX -= bullet.speed;
-  // } else {
-  //   bullet.posY += bullet.slope * bullet.speed;
-  //   bullet.posX += bullet.speed;
+  // bullet speed too fast when facing north and south
+  // if (slope > 1 || slope < -1 && coorX < char.posX) {
+  //   speed = 1
+  // } else if (slope > 1 || slope < -1 && coorX > char.posX) {
+  //   speed = -1
   // }
+  if (coorX < char.posX) {
+    speed = -6
+  } else {
+    speed = 6
+  }
+  bullets.push(new Bullet(slope, speed));
 }
 
 
@@ -64,10 +66,8 @@ function shootBullet() {
     ctx.fillStyle = "red";
     ctx.fill();
     ctx.closePath();
-    bullet.posY -= bullet.slope * bullet.speed;   // <=== for shooting left
-    bullet.posX -= bullet.speed;
-    // bullet.posY += bullet.slope * bullet.speed;     <=== for shooting right
-    // bullet.posX += bullet.speed;
+    bullet.posY += bullet.slope * bullet.speed;
+    bullet.posX += bullet.speed;
   }
 }
 
