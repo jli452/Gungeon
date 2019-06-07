@@ -114,6 +114,35 @@ function drawCharLeft() {
   ctx.drawImage(img, char.posX - 90, char.posY - 90, 150, 150);
 }
 
+function charHealth() {
+  var health = 10;
+  ctx.beginPath();
+  ctx.rect(char.posX - 40, char.posY - 60, health * 5, 5);
+  ctx.fillStyle = "red";
+  ctx.fill();
+  ctx.closePath();
+}
+
+function bossHealth() {
+  var health = 2000;
+  ctx.beginPath();
+  ctx.rect(40, 60, health / 3, 30);
+  ctx.strokeStyle = "black";
+  ctx.fillStyle = "red";
+  ctx.stroke();
+  ctx.fill();
+  ctx.closePath();
+  ctx.font = "40px Arial";
+  ctx.fillStyle = "white";
+  ctx.fillText("Wall of Flesh", 40, 60);
+}
+
+function drawBoss() {
+  var img = new Image();
+  img.src = "images/boss.png";
+  ctx.drawImage(img, 1030, 0, 320, 720);
+}
+
 function playerMovement() {
   if (rightPressed && upPressed && char.posX < canvas.width && char.posY > 0) {
     drawCharRight();
@@ -155,7 +184,7 @@ function drawGun() {
   ctx.fill();
   ctx.closePath();
 }
-
+/* SAVE THIS FOR HALF HEALTHED BOSS!!!!
 // newly spawned objects start at Y=25
 var spawnLineX = 1280;
 // spawn a new object every 1500ms
@@ -216,7 +245,7 @@ function spawnMonsters() {
   }
 
 }
-
+*/
 var animID;
 
 function pauseGame() {
@@ -241,10 +270,13 @@ function pauseGame() {
 
 function playGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawBoss();
   drawGun();
+  charHealth();
+  bossHealth();
   playerMovement();
   shootBullet();
-  spawnMonsters();
+  // spawnMonsters();
   animID = requestAnimationFrame(playGame);
 }
 
