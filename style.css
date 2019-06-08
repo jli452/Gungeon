@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap');
+
 
 body {
   background-image: url(images/pagebackground.jpg);
@@ -82,4 +84,12 @@ a.button4:hover {
   color: white;
   background-color: #db5d23;
   padding-top: 20px;
+}
+
+#footer::-moz-selection {
+background: transparent;
+}
+
+#footer::selection {
+background: transparent;
 }

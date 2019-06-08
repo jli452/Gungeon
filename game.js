@@ -24,6 +24,7 @@ var char = {
   posY: (canvas.height / 2)
 };
 
+
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 canvas.addEventListener("click", drawBullet);
@@ -73,13 +74,13 @@ function shootBullet() {
 
 // Checking which keys are not being pressed
 function keyUpHandler(event) {
-  if (event.key === "d") {
+  if (event.key === "d" || event.key === "D") {
     rightPressed = false;
-  } else if (event.key === "a") {
+  } else if (event.key === "a" || event.key === "A") {
     leftPressed = false;
-  } else if (event.key === "w") {
+  } else if (event.key === "w" || event.key === "W") {
     upPressed = false;
-  } else if (event.key === "s") {
+  } else if (event.key === "s" || event.key === "S") {
     downPressed = false;
   } else if (event.key === "Escape") {
     escPressed = false;
@@ -88,13 +89,13 @@ function keyUpHandler(event) {
 
 // Checking which keys are being pressed
 function keyDownHandler(event) {
-  if (event.key === "d") {
+  if (event.key === "d" || event.key === "D") {
     rightPressed = true;
-  } else if (event.key === "a") {
+  } else if (event.key === "a" || event.key === "A") {
     leftPressed = true;
-  } else if (event.key === "w") {
+  } else if (event.key === "w" || event.key === "W") {
     upPressed = true;
-  } else if (event.key === "s") {
+  } else if (event.key === "s" || event.key === "S") {
     downPressed = true;
   } else if (event.key === "Escape") {
     escPressed = true;
@@ -120,35 +121,45 @@ function charHealth() {
   ctx.fillStyle = "red";
   ctx.fill();
   ctx.closePath();
-  ctx.font = "10px Arial";
+  ctx.font = "9px 'Press Start 2P'";
   ctx.fillStyle = "white";
-  ctx.fillText(charName, char.posX - 40, char.posY - 58);
+  ctx.fillText(charName, char.posX - 40, char.posY - 55);
   if (charHp <= 0) {
-    cancelAnimationFrame(animID);
+
     alert("You suck at this game. Try Again!")
     document.location.reload();
+    cancelAnimationFrame();
   }
 }
 
 
 function bossHealth() {
   ctx.beginPath();
-  ctx.rect(40, 60, bossHp / 3, 30);
-  ctx.fillStyle = "red";
+  // ctx.rect(270, 660, 680, 40);
+  ctx.rect(270, 60, 680, 40);
+  ctx.fillStyle = "#540551";
   ctx.fill();
   ctx.closePath();
-  ctx.font = "40px Arial";
+  ctx.beginPath();
+  // ctx.rect(276, 665, bossHp / 3, 30);
+  ctx.rect(276, 65, bossHp / 3, 30);
+  ctx.fillStyle = "#ba1b3b";
+  ctx.fill();
+  ctx.closePath();
+  ctx.font = "30px 'Press Start 2P'";
   ctx.fillStyle = "white";
-  ctx.fillText("Wall of Flesh", 40, 60);
+  // ctx.fillText("Wall of Flesh", 440, 655);
+  ctx.fillText("Wall of Flesh", 440, 55);
   if (bossHp > 1000) {
     bossShooting();
   } else if (bossHp <= 1000) {
     bossBulletSpray();
   }
   if (bossHp == 0) {
-    cancelAnimationFrame(animID);
-    alert("Congratulations! You beat a stationary boss! What do you want from me, a cookie?");
+    alert("Congratulations! You beat a stationary boss! What do you want from me, a cookie? Play again and beat it faster this time.");
     document.location.reload();
+    cancelAnimationFrame();
+
   }
 }
 
@@ -290,9 +301,9 @@ function pauseGame() {
     ctx.fillStyle = "rgba(0,0,0,0.75)";
     ctx.fill();
     ctx.closePath();
-    ctx.font = "40px Arial";
+    ctx.font = "40px 'Press Start 2P'";
     ctx.fillStyle = "white";
-    ctx.fillText("GAME PAUSED", canvas.width / 2.5, canvas.height / 2);
+    ctx.fillText("GAME PAUSED", canvas.width / 3, canvas.height / 2);
   } else if (gamePaused) {
     gamePaused = false;
     canvas.addEventListener("click", drawBullet); //add back the ability to click to spawn bullets
@@ -304,9 +315,9 @@ function playGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   playerMovement();
   charHealth();
-  bossHealth();
   drawGun();
   shootBullet();
+  bossHealth();
   drawBoss();
   animID = requestAnimationFrame(playGame);
 }
