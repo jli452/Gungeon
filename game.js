@@ -7,8 +7,9 @@ var startGame = false;
 var gamePaused = false;
 var mouseDown = false;
 
-var charRadius = 20;
+var charName = prompt("Please enter your name");
 var bossHp = 2000;
+var charHp = 10;
 
 // event variables
 var rightPressed = false;
@@ -22,6 +23,7 @@ var char = {
   posX: (canvas.width / 2),
   posY: (canvas.height / 2)
 };
+
 
 function Bullet(m, speed) {
   this.posX = char.posX;
@@ -63,18 +65,11 @@ function shootBullet() {
     bullet.posY += bullet.slope * bullet.speed;
     bullet.posX += bullet.speed;
     if (bossHp > 0) {
-    if ((bullet.posX > 1040 && bullet.posX < 1050 && bullet.posY > 6 && bullet.posY < 170) || (bullet.posX > 1040 && bullet.posX < 1050 && bullet.posY > 505 && bullet.posY < 650)) {
-      bossHp-=50;
-      console.log(bossHp);
+      if ((bullet.posX > 1040 && bullet.posX < 1050 && bullet.posY > 6 && bullet.posY < 170) || (bullet.posX > 1040 && bullet.posX < 1050 && bullet.posY > 505 && bullet.posY < 650)) {
+        bossHp -= 50;
+        console.log(bossHp);
+      }
     }
-  }
-  }
-  if (bossHp <= 1000) {
-    spawnMonsters();
-  }
-  if (bossHp == 0) {
-    alert("Congratulations! You beat a stationary boss! What do you want from me, a cookie?");
-    document.location.reload();
   }
 }
 
@@ -122,12 +117,18 @@ function drawCharLeft() {
 }
 
 function charHealth() {
-  var charHp = 10;
   ctx.beginPath();
   ctx.rect(char.posX - 40, char.posY - 50, charHp * 5, 5);
   ctx.fillStyle = "red";
   ctx.fill();
   ctx.closePath();
+  ctx.font = "10px Arial";
+  ctx.fillStyle = "white";
+  ctx.fillText(charName, char.posX - 40, char.posY - 58);
+  if (charHp == 0) {
+    alert("You suck at this game. Try Again!")
+    document.location.reload();
+  }
 }
 
 function bossHealth() {
@@ -139,6 +140,13 @@ function bossHealth() {
   ctx.font = "40px Arial";
   ctx.fillStyle = "white";
   ctx.fillText("Wall of Flesh", 40, 60);
+  if (bossHp <= 1000) {
+    bossBulletSpray();
+  }
+  if (bossHp == 0) {
+    alert("Congratulations! You beat a stationary boss! What do you want from me, a cookie?");
+    document.location.reload();
+  }
 }
 
 function drawBoss() {
@@ -188,9 +196,9 @@ function drawGun() {
 }
 
 
-// newly spawned objects start at Y=25
+// newly spawned objects start at X=1280
 var spawnLineX = 1280;
-// spawn a new object every 1500ms
+// spawn a new object every 500ms
 var spawnRate = 500;
 // set how fast the objects will fall
 var spawnRateOfDescent = 2.5;
@@ -201,35 +209,22 @@ var objects = [];
 // save the starting time (used to calc elapsed time)
 var startTime = Date.now();
 
-function spawnRandomObject() {
-  // select a random type for this new object
-  var t;
-  if (Math.random() < 0.50) {
-    t = "red";
-  } else {
-    t = "blue";
-  }
+function spawnObject() {
   // create the new object
   var object = {
-    // set this objects type
-    type: t,
-    // set x randomly but at least 15px off the canvas edges
     x: spawnLineX,
-    // set x to start on the line where objects are spawned
     y: Math.random() * (canvas.width - 30) + 15,
   }
-
-  // add the new object to the objects[] array
   objects.push(object);
 }
 
-function spawnMonsters() {
+function bossBulletSpray() {
   // get the elapsed time
   var time = Date.now();
   // see if its time to spawn a new object
   if (time > (lastSpawn + spawnRate)) {
     lastSpawn = time;
-    spawnRandomObject();
+    spawnObject();
   }
   // draw the line where new objects are spawned
   ctx.beginPath();
@@ -240,11 +235,14 @@ function spawnMonsters() {
   for (var i = 0; i < objects.length; i++) {
     var object = objects[i];
     object.x -= spawnRateOfDescent;
-    ctx.beginPath();
-    ctx.arc(object.x, object.y, 8, 0, Math.PI * 2);
-    ctx.closePath();
-    ctx.fillStyle = object.type;
-    ctx.fill();
+    var img = new Image();
+    img.src = "images/bulletspray.png";
+    ctx.drawImage(img, object.x, object.y,);
+
+    if (object.x > char.posX-30 && object.x < char.posX + 10 && object.y > char.posY - 60 && object.y < char.posY + 20) {
+      charHp-=1;
+      console.log(charHp);
+    }
   }
 
 }
