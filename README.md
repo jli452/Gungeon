@@ -1,8 +1,16 @@
 # Gungeon
-Javascript version of Gungeon
-
-exam 1199
-
-To Do:
-Character runs out on the bottom and right of map
-Fix aiming for the left side
+Javascript version of Gungeon\
+\
+User: exam\
+PW: 1199\
+\
+Objective:\
+Kill the boss by shooting it\
+\
+Controls:\
+left-click: shoot\
+w: up\
+a: left\
+s: down\
+d: right\
+esc: pause\
