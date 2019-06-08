@@ -9,7 +9,7 @@ var mouseDown = false;
 
 var charName = prompt("Please enter your name");
 var bossHp = 2000;
-var charHp = 10;
+var charHp = 5;
 
 // event variables
 var rightPressed = false;
@@ -24,6 +24,9 @@ var char = {
   posY: (canvas.height / 2)
 };
 
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
+canvas.addEventListener("click", drawBullet);
 
 function Bullet(m, speed) {
   this.posX = char.posX;
@@ -35,11 +38,6 @@ function Bullet(m, speed) {
 }
 
 var bullets = [];
-
-document.addEventListener("keydown", keyDownHandler, false);
-document.addEventListener("keyup", keyUpHandler, false);
-canvas.addEventListener("click", drawBullet);
-
 
 function drawBullet(event) {
   let coorX = event.offsetX;
@@ -66,8 +64,8 @@ function shootBullet() {
     bullet.posX += bullet.speed;
     if (bossHp > 0) {
       if ((bullet.posX > 1040 && bullet.posX < 1050 && bullet.posY > 6 && bullet.posY < 170) || (bullet.posX > 1040 && bullet.posX < 1050 && bullet.posY > 505 && bullet.posY < 650)) {
-        bossHp -= 50;
-        console.log(bossHp);
+        bossHp -= 10;
+        bullets.splice(i, 1);
       }
     }
   }
@@ -118,18 +116,20 @@ function drawCharLeft() {
 
 function charHealth() {
   ctx.beginPath();
-  ctx.rect(char.posX - 40, char.posY - 50, charHp * 5, 5);
+  ctx.rect(char.posX - 40, char.posY - 50, charHp * 10, 5);
   ctx.fillStyle = "red";
   ctx.fill();
   ctx.closePath();
   ctx.font = "10px Arial";
   ctx.fillStyle = "white";
   ctx.fillText(charName, char.posX - 40, char.posY - 58);
-  if (charHp == 0) {
+  if (charHp <= 0) {
+    cancelAnimationFrame(animID);
     alert("You suck at this game. Try Again!")
     document.location.reload();
   }
 }
+
 
 function bossHealth() {
   ctx.beginPath();
@@ -140,10 +140,13 @@ function bossHealth() {
   ctx.font = "40px Arial";
   ctx.fillStyle = "white";
   ctx.fillText("Wall of Flesh", 40, 60);
-  if (bossHp <= 1000) {
+  if (bossHp > 1000) {
+    bossShooting();
+  } else if (bossHp <= 1000) {
     bossBulletSpray();
   }
   if (bossHp == 0) {
+    cancelAnimationFrame(animID);
     alert("Congratulations! You beat a stationary boss! What do you want from me, a cookie?");
     document.location.reload();
   }
@@ -196,26 +199,58 @@ function drawGun() {
 }
 
 
-// newly spawned objects start at X=1280
+
 var spawnLineX = 1280;
-// spawn a new object every 500ms
-var spawnRate = 500;
-// set how fast the objects will fall
+var spawnRate = 300;
 var spawnRateOfDescent = 2.5;
-// when was the last object spawned
 var lastSpawn = -1;
-// this array holds all spawned object
-var objects = [];
-// save the starting time (used to calc elapsed time)
+var object1s = [];
 var startTime = Date.now();
 
-function spawnObject() {
+function spawnObject1() {
   // create the new object
-  var object = {
+  var object1 = {
+    x: 1115,
+    y: 325,
+  }
+  object1s.push(object1);
+}
+
+function bossShooting() {
+  // get the elapsed time
+  var time = Date.now();
+  // see if its time to spawn a new object
+  if (time > (lastSpawn + 1000)) {
+    lastSpawn = time;
+    spawnObject1();
+  }
+  // draw the line where new objects are spawned
+  // move each object down the canvas
+  for (var i = 0; i < object1s.length; i++) {
+    var slope = (325 - char.posY) / (1115 - char.posX);
+    var object1 = object1s[i];
+    object1.y -= slope * spawnRateOfDescent;
+    object1.x -= spawnRateOfDescent;
+    var img = new Image();
+    img.src = "images/bulletnormal.png";
+    ctx.drawImage(img, object1.x, object1.y, 60, 40);
+
+    if (object1.x > char.posX - 30 && object1.x < char.posX + 10 && object1.y > char.posY - 60 && object1.y < char.posY + 20) {
+      charHp -= 1;
+      object1s.splice(i, 1);
+    }
+  }
+}
+
+var object2s = [];
+
+function spawnObject2() {
+  // create the new object
+  var object2 = {
     x: spawnLineX,
     y: Math.random() * (canvas.width - 30) + 15,
   }
-  objects.push(object);
+  object2s.push(object2);
 }
 
 function bossBulletSpray() {
@@ -224,24 +259,20 @@ function bossBulletSpray() {
   // see if its time to spawn a new object
   if (time > (lastSpawn + spawnRate)) {
     lastSpawn = time;
-    spawnObject();
+    spawnObject2();
   }
   // draw the line where new objects are spawned
-  ctx.beginPath();
-  ctx.moveTo(spawnLineX, 0);
-  ctx.lineTo(spawnLineX, canvas.height);
-  ctx.stroke();
   // move each object down the canvas
-  for (var i = 0; i < objects.length; i++) {
-    var object = objects[i];
-    object.x -= spawnRateOfDescent;
+  for (var i = 0; i < object2s.length; i++) {
+    var object2 = object2s[i];
+    object2.x -= spawnRateOfDescent;
     var img = new Image();
     img.src = "images/bulletspray.png";
-    ctx.drawImage(img, object.x, object.y,);
+    ctx.drawImage(img, object2.x, object2.y);
 
-    if (object.x > char.posX-30 && object.x < char.posX + 10 && object.y > char.posY - 60 && object.y < char.posY + 20) {
-      charHp-=1;
-      console.log(charHp);
+    if (object2.x > char.posX - 30 && object2.x < char.posX + 10 && object2.y > char.posY - 60 && object2.y < char.posY + 20) {
+      charHp -= 1;
+      object2s.splice(i, 1);
     }
   }
 
@@ -253,7 +284,7 @@ function pauseGame() {
   if (!gamePaused) {
     canvas.removeEventListener("click", drawBullet); //Prevent spam clicking bullets while paused
     gamePaused = true;
-    cancelAnimationFrame(animID)
+    cancelAnimationFrame(animID);
     ctx.beginPath();
     ctx.rect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "rgba(0,0,0,0.75)";
