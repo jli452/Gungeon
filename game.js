@@ -8,6 +8,7 @@ var gamePaused = false;
 var mouseDown = false;
 
 var charRadius = 20;
+var bossHp = 2000;
 
 // event variables
 var rightPressed = false;
@@ -42,17 +43,10 @@ function drawBullet(event) {
   let coorX = event.offsetX;
   let coorY = event.offsetY;
   let slope = (coorY - char.posY) / (coorX - char.posX);
-  console.log(slope);
-  // bullet speed too fast when facing north and south
-  // if (slope > 1 || slope < -1 && coorX < char.posX) {
-  //   speed = 1
-  // } else if (slope > 1 || slope < -1 && coorX > char.posX) {
-  //   speed = -1
-  // }
   if (coorX < char.posX) {
-    speed = -6
+    speed = -5
   } else {
-    speed = 6
+    speed = 5
   }
   bullets.push(new Bullet(slope, speed));
 }
@@ -68,6 +62,19 @@ function shootBullet() {
     ctx.closePath();
     bullet.posY += bullet.slope * bullet.speed;
     bullet.posX += bullet.speed;
+    if (bossHp > 0) {
+    if ((bullet.posX > 1040 && bullet.posX < 1050 && bullet.posY > 6 && bullet.posY < 170) || (bullet.posX > 1040 && bullet.posX < 1050 && bullet.posY > 505 && bullet.posY < 650)) {
+      bossHp-=50;
+      console.log(bossHp);
+    }
+  }
+  }
+  if (bossHp <= 1000) {
+    spawnMonsters();
+  }
+  if (bossHp == 0) {
+    alert("Congratulations! You beat a stationary boss! What do you want from me, a cookie?");
+    document.location.reload();
   }
 }
 
@@ -105,31 +112,28 @@ function keyDownHandler(event) {
 function drawCharRight() {
   var img = new Image();
   img.src = "images/charright.png";
-  ctx.drawImage(img, char.posX - 90, char.posY - 90, 150, 150);
+  ctx.drawImage(img, char.posX - 90, char.posY - 80, 150, 150);
 }
 
 function drawCharLeft() {
   var img = new Image();
   img.src = "images/charleft.png";
-  ctx.drawImage(img, char.posX - 90, char.posY - 90, 150, 150);
+  ctx.drawImage(img, char.posX - 90, char.posY - 80, 150, 150);
 }
 
 function charHealth() {
-  var health = 10;
+  var charHp = 10;
   ctx.beginPath();
-  ctx.rect(char.posX - 40, char.posY - 60, health * 5, 5);
+  ctx.rect(char.posX - 40, char.posY - 50, charHp * 5, 5);
   ctx.fillStyle = "red";
   ctx.fill();
   ctx.closePath();
 }
 
 function bossHealth() {
-  var health = 2000;
   ctx.beginPath();
-  ctx.rect(40, 60, health / 3, 30);
-  ctx.strokeStyle = "black";
+  ctx.rect(40, 60, bossHp / 3, 30);
   ctx.fillStyle = "red";
-  ctx.stroke();
   ctx.fill();
   ctx.closePath();
   ctx.font = "40px Arial";
@@ -144,7 +148,7 @@ function drawBoss() {
 }
 
 function playerMovement() {
-  if (rightPressed && upPressed && char.posX < canvas.width && char.posY > 0) {
+  if (rightPressed && upPressed && char.posX < 750 && char.posY > 0) {
     drawCharRight();
     char.posX += 2;
     char.posY -= 2;
@@ -152,7 +156,7 @@ function playerMovement() {
     drawCharLeft();
     char.posX -= 2;
     char.posY -= 2;
-  } else if (rightPressed && downPressed && char.posX < canvas.width && char.posY < canvas.height) {
+  } else if (rightPressed && downPressed && char.posX < 750 && char.posY < canvas.height) {
     drawCharRight();
     char.posX += 2;
     char.posY += 2;
@@ -160,7 +164,7 @@ function playerMovement() {
     drawCharLeft();
     char.posX -= 2;
     char.posY += 2;
-  } else if (rightPressed && char.posX < canvas.width) {
+  } else if (rightPressed && char.posX < 750) {
     drawCharRight();
     char.posX += 2;
   } else if (leftPressed && char.posX > 0) {
@@ -178,13 +182,12 @@ function playerMovement() {
 }
 
 function drawGun() {
-  ctx.beginPath();
-  ctx.rect(char.posX, char.posY, 20, 10);
-  ctx.fillStyle = "#FFFFFF";
-  ctx.fill();
-  ctx.closePath();
+  var img = new Image();
+  img.src = "images/gun.png";
+  ctx.drawImage(img, char.posX - 14, char.posY - 10, 35, 40);
 }
-/* SAVE THIS FOR HALF HEALTHED BOSS!!!!
+
+
 // newly spawned objects start at Y=25
 var spawnLineX = 1280;
 // spawn a new object every 1500ms
@@ -197,6 +200,7 @@ var lastSpawn = -1;
 var objects = [];
 // save the starting time (used to calc elapsed time)
 var startTime = Date.now();
+
 function spawnRandomObject() {
   // select a random type for this new object
   var t;
@@ -214,9 +218,11 @@ function spawnRandomObject() {
     // set x to start on the line where objects are spawned
     y: Math.random() * (canvas.width - 30) + 15,
   }
+
   // add the new object to the objects[] array
   objects.push(object);
 }
+
 function spawnMonsters() {
   // get the elapsed time
   var time = Date.now();
@@ -240,8 +246,9 @@ function spawnMonsters() {
     ctx.fillStyle = object.type;
     ctx.fill();
   }
+
 }
-*/
+
 var animID;
 
 function pauseGame() {
@@ -266,13 +273,12 @@ function pauseGame() {
 
 function playGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawBoss();
-  drawGun();
+  playerMovement();
   charHealth();
   bossHealth();
-  playerMovement();
+  drawGun();
   shootBullet();
-  // spawnMonsters();
+  drawBoss();
   animID = requestAnimationFrame(playGame);
 }
 
