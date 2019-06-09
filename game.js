@@ -15,16 +15,18 @@ var upPressed = false;
 var downPressed = false;
 var escPressed = false;
 
+//starting character position at start of game
 var char = {
   posX: (canvas.width / 2),
   posY: (canvas.height / 2)
 };
 
-
+//event listeners for movement
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 canvas.addEventListener("click", drawBullet);
 
+//character's bullet properties
 function Bullet(m, speed) {
   this.posX = char.posX;
   this.posY = char.posY;
@@ -36,6 +38,7 @@ function Bullet(m, speed) {
 
 var bullets = [];
 
+//calculating the slope between bullet and where mouse was clicked
 function drawBullet(event) {
   let coorX = event.offsetX;
   let coorY = event.offsetY;
@@ -48,7 +51,7 @@ function drawBullet(event) {
   bullets.push(new Bullet(slope, speed));
 }
 
-
+//if bullet hits the eye coordinates, do damage to the boss and kill the bullet using splice
 function shootBullet() {
   for (i = 0; i < bullets.length; i++) {
     bullet = bullets[i];
@@ -102,6 +105,7 @@ function keyDownHandler(event) {
   }
 }
 
+//drawing character images
 function drawCharRight() {
   var img = new Image();
   img.src = "images/charright.png";
@@ -114,6 +118,7 @@ function drawCharLeft() {
   ctx.drawImage(img, char.posX - 90, char.posY - 80, 150, 150);
 }
 
+//Draws the health bar above the character as well as name given at start of game
 function charHealth() {
   ctx.beginPath();
   ctx.rect(char.posX - 40, char.posY - 50, charHp * 10, 5);
@@ -130,6 +135,7 @@ function charHealth() {
   }
 }
 
+//Draws the boss's health bar on top of game screen and what to do at specifc health points
 function bossHealth() {
   ctx.beginPath();
   // ctx.rect(270, 660, 680, 40);
@@ -160,12 +166,14 @@ function bossHealth() {
   }
 }
 
+//draws the boss
 function drawBoss() {
   var img = new Image();
   img.src = "images/boss.png";
   ctx.drawImage(img, 1030, 0, 320, 720);
 }
 
+//Using w a s d to move player
 function playerMovement() {
   if (rightPressed && upPressed && char.posX < 750 && char.posY > 0) {
     drawCharRight();
@@ -200,12 +208,14 @@ function playerMovement() {
   }
 }
 
+// draws the gun the player is holding
 function drawGun() {
   var img = new Image();
   img.src = "images/gun.png";
   ctx.drawImage(img, char.posX - 14, char.posY - 10, 35, 40);
 }
 
+//variables for boss shooting
 var spawnLineX = 1180;
 var spawnRate = 300;
 var spawnRateOfDescent = 2.5;
@@ -213,6 +223,7 @@ var lastSpawn = -1;
 var object1s = [];
 var startTime = Date.now();
 
+//version 1 shooting of boss at above 50 percent health
 function spawnObject1() {
   // create the new object
   var object1 = {
@@ -222,6 +233,7 @@ function spawnObject1() {
   object1s.push(object1);
 }
 
+//every 1000ms, calc slope between player and boss and use that for boss shooting at player
 function bossShooting() {
   // get the elapsed time
   var time = Date.now();
@@ -251,6 +263,7 @@ function bossShooting() {
   }
 }
 
+//version 2 of boss shooting
 var object2s = [];
 
 function spawnObject2() {
@@ -262,6 +275,7 @@ function spawnObject2() {
   object2s.push(object2);
 }
 
+//every (spawnRate)ms randomly spawn a bullet that goes straight across the x value of canvas
 function bossBulletSpray() {
   // get the elapsed time
   var time = Date.now();
@@ -291,7 +305,7 @@ function bossBulletSpray() {
 }
 
 var animID;
-
+//for pausing the game
 function pauseGame() {
   if (!gamePaused) {
     canvas.removeEventListener("click", drawBullet); //Prevent spam clicking bullets while paused
@@ -312,6 +326,7 @@ function pauseGame() {
   }
 }
 
+//function that is called to run the code
 function playGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   playerMovement();
