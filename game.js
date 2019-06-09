@@ -153,9 +153,11 @@ function bossHealth() {
   ctx.fillStyle = "white";
   // ctx.fillText("Wall of Flesh", 440, 655);
   ctx.fillText("Wall of Flesh", 440, 55);
-  if (bossHp > 1000) {
+  if (bossHp >= 1500) {
     bossShooting();
-  } else if (bossHp <= 1000) {
+  } else if (bossHp < 1500 && bossHp > 500) {
+    bossShooting2();
+  } else if (bossHp <= 500) {
     bossBulletSpray();
   }
   if (bossHp == 0) {
@@ -175,32 +177,32 @@ function drawBoss() {
 
 //Using w a s d to move player
 function playerMovement() {
-  if (rightPressed && upPressed && char.posX < 750 && char.posY > 0) {
+  if (rightPressed && upPressed && char.posX < 750 && char.posY > 40) {
     drawCharRight();
     char.posX += 2;
     char.posY -= 2;
-  } else if (leftPressed && upPressed && char.posX > 0 && char.posY > 0) {
+  } else if (leftPressed && upPressed && char.posX > 30 && char.posY > 40) {
     drawCharLeft();
     char.posX -= 2;
     char.posY -= 2;
-  } else if (rightPressed && downPressed && char.posX < 750 && char.posY < canvas.height) {
+  } else if (rightPressed && downPressed && char.posX < 750 && char.posY < canvas.height - 30) {
     drawCharRight();
     char.posX += 2;
     char.posY += 2;
-  } else if (leftPressed && downPressed && char.posY < canvas.height && char.posX > 0) {
+  } else if (leftPressed && downPressed && char.posY < canvas.height - 30 && char.posX > 30) {
     drawCharLeft();
     char.posX -= 2;
     char.posY += 2;
   } else if (rightPressed && char.posX < 750) {
     drawCharRight();
     char.posX += 2;
-  } else if (leftPressed && char.posX > 0) {
+  } else if (leftPressed && char.posX > 30) {
     drawCharLeft();
     char.posX -= 2;
-  } else if (upPressed && char.posY > 0) {
+  } else if (upPressed && char.posY > 40) {
     drawCharRight();
     char.posY -= 2;
-  } else if (downPressed && char.posY < canvas.height) {
+  } else if (downPressed && char.posY < canvas.height - 30) {
     drawCharRight();
     char.posY += 2;
   } else {
@@ -302,6 +304,55 @@ function bossBulletSpray() {
     }
   }
 
+}
+
+var object3s = [];
+
+function spawnObject3() {
+  var object3 = {
+    x1: 1075,
+    y1: 91,
+    x2: 1075,
+    y2: 585,
+  }
+  object3s.push(object3);
+}
+
+//every 1000ms, calc slope between player and boss and use that for boss shooting at player
+function bossShooting2() {
+  // get the elapsed time
+  var time = Date.now();
+  // see if its time to spawn a new object
+  if (time > (lastSpawn + 1200)) {
+    lastSpawn = time;
+    spawnObject3();
+  }
+  // draw the line where new objects are spawned
+  // move each object down the canvas
+  for (var i = 0; i < object3s.length; i++) {
+    var slope1 = (91 - char.posY) / (1075 - char.posX);
+    var slope2 = (585 - char.posY) / (1075 - char.posX);
+    var object3 = object3s[i];
+    object3.y1 -= slope1 * spawnRateOfDescent;
+    object3.x1 -= spawnRateOfDescent;
+    object3.y2 -= slope2 * spawnRateOfDescent;
+    object3.x2 -= spawnRateOfDescent;
+    var img = new Image();
+    img.src = "images/bulletnormal.png";
+    ctx.drawImage(img, object3.x1, object3.y1, 60, 40);
+    ctx.drawImage(img, object3.x2, object3.y2, 60, 40);
+    if (object3.x1 > char.posX - 30 && object3.x1 < char.posX + 10 && object3.y1 > char.posY - 60 && object3.y1 < char.posY + 20) {
+      charHp -= 1;
+      object3s.splice(i, 1);
+    }
+    if (object3.x2 > char.posX - 30 && object3.x2 < char.posX + 10 && object3.y2 > char.posY - 60 && object3.y2 < char.posY + 20) {
+      charHp -= 1;
+      object3s.splice(i, 1);
+    }
+    if (object3.x < 0) {
+      object3s.splice(i, 1);
+    }
+  }
 }
 
 var animID;
