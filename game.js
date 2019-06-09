@@ -1,13 +1,10 @@
-// i hate this
-
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
 var startGame = false;
 var gamePaused = false;
-var mouseDown = false;
 
-var charName = prompt("Please enter your name");
+var charName = prompt("Please enter your name. Have your fingers ready on WASD and your mouse.");
 var bossHp = 2000;
 var charHp = 5;
 
@@ -17,7 +14,6 @@ var leftPressed = false;
 var upPressed = false;
 var downPressed = false;
 var escPressed = false;
-var mouseClicked = false;
 
 var char = {
   posX: (canvas.width / 2),
@@ -68,6 +64,9 @@ function shootBullet() {
         bossHp -= 10;
         bullets.splice(i, 1);
       }
+    }
+    if (bullet.posX > 1280) {
+      bullets.splice(i,1);
     }
   }
 }
@@ -125,13 +124,11 @@ function charHealth() {
   ctx.fillStyle = "white";
   ctx.fillText(charName, char.posX - 40, char.posY - 55);
   if (charHp <= 0) {
-
     alert("You suck at this game. Try Again!")
     document.location.reload();
     cancelAnimationFrame();
   }
 }
-
 
 function bossHealth() {
   ctx.beginPath();
@@ -209,9 +206,7 @@ function drawGun() {
   ctx.drawImage(img, char.posX - 14, char.posY - 10, 35, 40);
 }
 
-
-
-var spawnLineX = 1280;
+var spawnLineX = 1180;
 var spawnRate = 300;
 var spawnRateOfDescent = 2.5;
 var lastSpawn = -1;
@@ -250,6 +245,9 @@ function bossShooting() {
       charHp -= 1;
       object1s.splice(i, 1);
     }
+    if (object1.x < 0) {
+      object1s.splice(i, 1);
+    }
   }
 }
 
@@ -285,6 +283,9 @@ function bossBulletSpray() {
       charHp -= 1;
       object2s.splice(i, 1);
     }
+    if (object2.x < 0) {
+      object2s.splice(i, 1);
+    }
   }
 
 }
@@ -317,8 +318,8 @@ function playGame() {
   charHealth();
   drawGun();
   shootBullet();
-  bossHealth();
   drawBoss();
+  bossHealth();
   animID = requestAnimationFrame(playGame);
 }
 
