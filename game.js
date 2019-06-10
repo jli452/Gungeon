@@ -252,7 +252,7 @@ function bossShooting() {
     object1.y -= slope * spawnRateOfDescent;
     object1.x -= spawnRateOfDescent;
     var img = new Image();
-    img.src = "images/bulletnormal.png";
+    img.src = "images/bulletmouth.png";
     ctx.drawImage(img, object1.x, object1.y, 60, 40);
 
     if (object1.x > char.posX - 30 && object1.x < char.posX + 10 && object1.y > char.posY - 60 && object1.y < char.posY + 20) {
@@ -384,8 +384,8 @@ function playGame() {
   charHealth();
   drawGun();
   shootBullet();
-  drawBoss();
   bossHealth();
+  drawBoss();
   animID = requestAnimationFrame(playGame);
 }
 
