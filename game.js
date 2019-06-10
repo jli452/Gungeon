@@ -169,12 +169,25 @@ function bossHealth() {
 }
 
 //draws the boss
-function drawBoss() {
+function drawBoss1() {
   var img = new Image();
   img.src = "images/boss.png";
   ctx.drawImage(img, 1030, 0, 320, 720);
 }
 
+function drawBoss2() {
+  var img = new Image();
+  img.src = "images/botheye.png";
+  ctx.drawImage(img, 1030, 0, 320, 720);
+}
+
+function drawBoss() {
+  if (bossHp <= 500) {
+    drawBoss2();
+  } else if (bossHp > 500) {
+    drawBoss1();
+  }
+}
 //Using w a s d to move player
 function playerMovement() {
   if (rightPressed && upPressed && char.posX < 750 && char.posY > 40) {
@@ -307,15 +320,22 @@ function bossBulletSpray() {
 }
 
 var object3s = [];
+var object4s = [];
 
 function spawnObject3() {
   var object3 = {
     x1: 1075,
     y1: 91,
+  }
+  object3s.push(object3);
+}
+
+function spawnObject4() {
+  var object4 = {
     x2: 1075,
     y2: 585,
   }
-  object3s.push(object3);
+  object4s.push(object4);
 }
 
 //every 1000ms, calc slope between player and boss and use that for boss shooting at player
@@ -326,31 +346,40 @@ function bossShooting2() {
   if (time > (lastSpawn + 1200)) {
     lastSpawn = time;
     spawnObject3();
+    spawnObject4();
   }
   // draw the line where new objects are spawned
   // move each object down the canvas
   for (var i = 0; i < object3s.length; i++) {
     var slope1 = (91 - char.posY) / (1075 - char.posX);
-    var slope2 = (585 - char.posY) / (1075 - char.posX);
     var object3 = object3s[i];
     object3.y1 -= slope1 * spawnRateOfDescent;
     object3.x1 -= spawnRateOfDescent;
-    object3.y2 -= slope2 * spawnRateOfDescent;
-    object3.x2 -= spawnRateOfDescent;
     var img = new Image();
     img.src = "images/bulletnormal.png";
     ctx.drawImage(img, object3.x1, object3.y1, 60, 40);
-    ctx.drawImage(img, object3.x2, object3.y2, 60, 40);
     if (object3.x1 > char.posX - 30 && object3.x1 < char.posX + 10 && object3.y1 > char.posY - 60 && object3.y1 < char.posY + 20) {
-      charHp -= 1;
-      object3s.splice(i, 1);
-    }
-    if (object3.x2 > char.posX - 30 && object3.x2 < char.posX + 10 && object3.y2 > char.posY - 60 && object3.y2 < char.posY + 20) {
       charHp -= 1;
       object3s.splice(i, 1);
     }
     if (object3.x < 0) {
       object3s.splice(i, 1);
+    }
+  }
+  for (var i = 0; i < object4s.length; i++) {
+    var slope2 = (585 - char.posY) / (1075 - char.posX);
+    var object4 = object4s[i];
+    object4.y2 -= slope2 * spawnRateOfDescent;
+    object4.x2 -= spawnRateOfDescent;
+    var img = new Image();
+    img.src = "images/bulletnormal.png";
+    ctx.drawImage(img, object4.x2, object4.y2, 60, 40);
+    if (object4.x2 > char.posX - 30 && object4.x2 < char.posX + 10 && object4.y2 > char.posY - 60 && object4.y2 < char.posY + 20) {
+      charHp -= 1;
+      object4s.splice(i, 1);
+    }
+    if (object4.x < 0) {
+      object4s.splice(i, 1);
     }
   }
 }
