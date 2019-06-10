@@ -5,7 +5,9 @@ var startGame = false;
 var gamePaused = false;
 
 var charName = prompt("Please enter your name. Have your fingers ready on WASD and your mouse.");
-var bossHp = 2000;
+var topEyeHp = 600;
+var bottomEyeHp = 600;
+var mouthHp = 800;
 var charHp = 5;
 
 // event variables
@@ -62,9 +64,21 @@ function shootBullet() {
     ctx.closePath();
     bullet.posY += bullet.slope * bullet.speed;
     bullet.posX += bullet.speed;
-    if (bossHp > 0) {
-      if ((bullet.posX > 1040 && bullet.posX < 1050 && bullet.posY > 6 && bullet.posY < 170) || (bullet.posX > 1040 && bullet.posX < 1050 && bullet.posY > 505 && bullet.posY < 650)) {
-        bossHp -= 10;
+    if (topEyeHp > 0) {
+      if (bullet.posX > 1040 && bullet.posX < 1050 && bullet.posY > 6 && bullet.posY < 170) {
+        topEyeHp -= 10;
+        bullets.splice(i, 1);
+      }
+    }
+    if (bottomEyeHp > 0) {
+      if (bullet.posX > 1040 && bullet.posX < 1050 && bullet.posY > 505 && bullet.posY < 650) {
+        bottomEyeHp -= 10;
+        bullets.splice(i, 1);
+      }
+    }
+    if (mouthHp > 0 && topEyeHp == 0 && bottomEyeHp == 0) {
+      if (bullet.posX > 1070 && bullet.posX < 1100 && bullet.posY > 250 && bullet.posY < 410) {
+        mouthHp -= 10;
         bullets.splice(i, 1);
       }
     }
@@ -137,6 +151,7 @@ function charHealth() {
 
 //Draws the boss's health bar on top of game screen and what to do at specifc health points
 function bossHealth() {
+  var bossHp = topEyeHp + bottomEyeHp + mouthHp;
   ctx.beginPath();
   // ctx.rect(270, 660, 680, 40);
   ctx.rect(270, 60, 680, 40);
@@ -153,11 +168,11 @@ function bossHealth() {
   ctx.fillStyle = "white";
   // ctx.fillText("Wall of Flesh", 440, 655);
   ctx.fillText("Wall of Flesh", 440, 55);
-  if (bossHp >= 1500) {
-    bossShooting();
-  } else if (bossHp < 1500 && bossHp > 500) {
+  if (bossHp > 1400) {
     bossShooting2();
-  } else if (bossHp <= 500) {
+  } else if (bossHp <= 1400 && bossHp > 800) {
+    bossShooting();
+  } else if (bossHp <= 800) {
     bossBulletSpray();
   }
   if (bossHp == 0) {
@@ -181,11 +196,28 @@ function drawBoss2() {
   ctx.drawImage(img, 1030, 0, 320, 720);
 }
 
+function drawBoss3() {
+  var img = new Image();
+  img.src = "images/topeye.png";
+  ctx.drawImage(img, 1030, 0, 320, 720);
+}
+
+function drawBoss4() {
+  var img = new Image();
+  img.src = "images/bottomeye.png";
+  ctx.drawImage(img, 1030, 0, 320, 720);
+}
+
 function drawBoss() {
-  if (bossHp <= 500) {
-    drawBoss2();
-  } else if (bossHp > 500) {
+  var bossHp = topEyeHp + bottomEyeHp + mouthHp;
+  if (topEyeHp > 0 && bottomEyeHp > 0) {
     drawBoss1();
+  } else if (topEyeHp == 0 && bottomEyeHp == 0) {
+    drawBoss2();
+  } else if (topEyeHp == 0 && bottomEyeHp > 0) {
+    drawBoss3();
+  } else if (topEyeHp > 0 && bottomEyeHp == 0) {
+    drawBoss4();
   }
 }
 //Using w a s d to move player
@@ -232,7 +264,7 @@ function drawGun() {
 
 //variables for boss shooting
 var spawnLineX = 1180;
-var spawnRate = 300;
+var spawnRate = 200;
 var spawnRateOfDescent = 2.5;
 var lastSpawn = -1;
 var object1s = [];
@@ -285,7 +317,7 @@ function spawnObject2() {
   // create the new object
   var object2 = {
     x: spawnLineX,
-    y: Math.random() * (canvas.width - 30) + 15,
+    y: Math.random() * (canvas.height - 30) + 15,
   }
   object2s.push(object2);
 }
